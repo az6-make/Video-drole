@@ -44,7 +44,7 @@ canvas{
     const COUNT = 80;
     let width = 1, height = 1;
     let last = performance.now();
-    const HITBOX_MULTIPLIER = 1.4;
+    const HITBOX_MULTIPLIER = 1.7;
 
 
     function resize() {
@@ -84,29 +84,28 @@ canvas{
 
 
     function getTouchedVirus(clickX, clickY) {
-        for (const p of particles) {
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
             const wobble = Math.sin(p.phase) * 10;
             const x = p.x + wobble;
             const y = p.y;
             
-            ctx.font = `bold ${p.size}px Consolas, monospace`;
-            const textMetrics = ctx.measureText("VIRUS");
-            const textWidth = textMetrics.width;
+            const textWidth = p.size * 3.2;
             const textHeight = p.size * 1.2;
             
             const hitboxWidth = textWidth * HITBOX_MULTIPLIER;
             const hitboxHeight = textHeight * HITBOX_MULTIPLIER;
             
-            const left = x - hitboxWidth / 2;
-            const right = x + hitboxWidth / 2;
-            const top = y - hitboxHeight / 2;
-            const bottom = y + hitboxHeight / 2;
+            const left = x - hitboxWidth * 0.5;
+            const right = x + hitboxWidth * 0.5;
+            const top = y - hitboxHeight * 0.5;
+            const bottom = y + hitboxHeight * 0.5;
             
             if (clickX >= left && clickX <= right && clickY >= top && clickY <= bottom) {
-                return p;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
 
@@ -160,8 +159,7 @@ canvas{
 
 
     function handleCanvasInteraction(x, y) {
-        const touchedVirus = getTouchedVirus(x, y);
-        if (touchedVirus) {
+        if (getTouchedVirus(x, y)) {
             window.open(window.location.href, '_blank');
         } else {
             attemptFullscreen();
