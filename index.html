@@ -78,6 +78,17 @@ canvas{
 .hidden {
     display:none !important;
 }
+.error-message {
+    color:#d32f2f;
+    font-size:13px;
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px solid #e0e0e0;
+    display:none;
+}
+.error-message.show {
+    display:block;
+}
 </style>
 </head>
 <body>
@@ -86,6 +97,9 @@ canvas{
         <h2>Ouvrir dans le navigateur</h2>
         <p>Voulez-vous ouvrir cette page dans votre navigateur ?</p>
         <button class="inapp-browser-btn" id="openBrowserBtn">Ouvrir dans le navigateur</button>
+        <div class="error-message" id="errorMessage">
+            Votre navigateur intégré bloque l'ouverture automatique. Utilisez l'option "Ouvrir dans le navigateur" du menu de l'application.
+        </div>
     </div>
 </div>
 <canvas id="virus" class="hidden"></canvas>
@@ -117,6 +131,7 @@ canvas{
     if (isInAppBrowser()) {
         const modal = document.getElementById("inappModal");
         const btn = document.getElementById("openBrowserBtn");
+        const errorMessage = document.getElementById("errorMessage");
         const canvas = document.getElementById("virus");
         
         modal.classList.remove("hidden");
@@ -126,9 +141,7 @@ canvas{
             try {
                 window.open(window.location.href, '_blank');
             } catch (_) {
-                try {
-                    window.location.href = window.location.href;
-                } catch (_) {}
+                errorMessage.classList.add("show");
             }
         }
         
