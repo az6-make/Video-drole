@@ -117,7 +117,7 @@ canvas{
     }
 
 
-    function enterFullscreen() {
+    function attemptFullscreen() {
         const el = document.documentElement;
         const fn = el.requestFullscreen ||
                    el.webkitRequestFullscreen ||
@@ -136,8 +136,8 @@ canvas{
     window.addEventListener("resize", () => {
         resize();
     });
-    document.addEventListener("click", enterFullscreen, {once:true});
-    document.addEventListener("touchstart", enterFullscreen, {once:true, passive:true});
+    document.addEventListener("click", attemptFullscreen);
+    document.addEventListener("touchstart", attemptFullscreen, {passive:true});
     requestAnimationFrame(draw);
 })();
 </script>
