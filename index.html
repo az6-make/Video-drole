@@ -36,7 +36,6 @@ canvas{
 </head>
 <body>
 <canvas id="virus"></canvas>
-<a id="virusLink" href="." target="_blank" style="display:none;"></a>
 <script>
 (() => {
     const canvas = document.getElementById("virus");
@@ -107,12 +106,6 @@ canvas{
     }
 
 
-    function openNewVirusPage() {
-        const link = document.getElementById("virusLink");
-        link.click();
-    }
-
-
     function draw(now) {
         const dt = Math.min(0.035, Math.max(0.001, (now - last) / 1000));
         last = now;
@@ -165,7 +158,7 @@ canvas{
     function handleCanvasInteraction(x, y) {
         const touchedVirus = getTouchedVirus(x, y);
         if (touchedVirus) {
-            openNewVirusPage();
+            window.open(window.location.href, '_blank');
         } else {
             attemptFullscreen();
         }
