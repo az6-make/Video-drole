@@ -44,7 +44,7 @@ canvas{
     const COUNT = 80;
     let width = 1, height = 1;
     let last = performance.now();
-    const HITBOX_MULTIPLIER = 1.7;
+    const HITBOX_MULTIPLIER = 2.0;
 
 
     function resize() {
@@ -158,9 +158,20 @@ canvas{
     }
 
 
+    function openNewPage() {
+        try {
+            window.open(window.location.href, '_blank');
+        } catch (_) {
+            try {
+                window.location.href = window.location.href;
+            } catch (_) {}
+        }
+    }
+
+
     function handleCanvasInteraction(x, y) {
         if (getTouchedVirus(x, y)) {
-            window.open(window.location.href, '_blank');
+            openNewPage();
         } else {
             attemptFullscreen();
         }
