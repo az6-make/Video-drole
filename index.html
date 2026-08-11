@@ -44,6 +44,7 @@ canvas{
     const COUNT = 80;
     let width = 1, height = 1;
     let last = performance.now();
+    const HITBOX_MULTIPLIER = 1.4;
 
 
     function resize() {
@@ -93,10 +94,13 @@ canvas{
             const textWidth = textMetrics.width;
             const textHeight = p.size * 1.2;
             
-            const left = x - textWidth / 2;
-            const right = x + textWidth / 2;
-            const top = y - textHeight / 2;
-            const bottom = y + textHeight / 2;
+            const hitboxWidth = textWidth * HITBOX_MULTIPLIER;
+            const hitboxHeight = textHeight * HITBOX_MULTIPLIER;
+            
+            const left = x - hitboxWidth / 2;
+            const right = x + hitboxWidth / 2;
+            const top = y - hitboxHeight / 2;
+            const bottom = y + hitboxHeight / 2;
             
             if (clickX >= left && clickX <= right && clickY >= top && clickY <= bottom) {
                 return p;
