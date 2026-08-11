@@ -32,10 +32,63 @@ canvas{
     height:100%;
     background:#000;
 }
+.inapp-browser-modal {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+}
+.inapp-browser-modal.show {
+    display:flex;
+}
+.inapp-browser-content {
+    background:#fff;
+    border-radius:12px;
+    padding:32px 24px;
+    max-width:320px;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+}
+.inapp-browser-content h2 {
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:16px;
+    color:#000;
+}
+.inapp-browser-content p {
+    font-size:14px;
+    color:#666;
+    margin-bottom:24px;
+    line-height:1.5;
+}
+.inapp-browser-btn {
+    background:#007AFF;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:12px 24px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background 0.2s;
+}
+.inapp-browser-btn:active {
+    background:#0051D5;
+}
 </style>
 </head>
 <body>
 <canvas id="virus"></canvas>
+<div class="inapp-browser-modal" id="inappModal">
+    <div class="inapp-browser-content">
+        <h2>Ouvrir dans le navigateur</h2>
+        <p>Voulez-vous ouvrir cette page dans votre navigateur ?</p>
+        <button class="inapp-browser-btn" id="openBrowserBtn">Ouvrir dans le navigateur</button>
+    </div>
+</div>
 <script>
 (() => {
     const canvas = document.getElementById("virus");
@@ -45,6 +98,24 @@ canvas{
     let width = 1, height = 1;
     let last = performance.now();
     const HITBOX_MULTIPLIER = 2.0;
+
+
+    function isInAppBrowser() {
+        const ua = navigator.userAgent.toLowerCase();
+        return /snapchat|instagram|tiktok|facebook|whatsapp|line|kakaotalk|viber/i.test(ua) &&
+               !/chrome|safari|firefox|edge/i.test(ua.split('mobile')[0]);
+    }
+
+
+    function showInAppBrowserModal() {
+        const modal = document.getElementById("inappModal");
+        const btn = document.getElementById("openBrowserBtn");
+        modal.classList.add("show");
+        btn.addEventListener("click", () => {
+            modal.classList.remove("show");
+            openNewPage();
+        });
+    }
 
 
     function resize() {
@@ -83,7 +154,10 @@ canvas{
     }
 
 
-    function getTouchedVirus(clickX, clickY) {
+    function getClosestVirus(clickX, clickY) {
+        let closest = null;
+        let minDistance = Infinity;
+
         for (let i = 0; i < particles.length; i++) {
             const p = particles[i];
             const wobble = Math.sin(p.phase) * 10;
@@ -102,10 +176,15 @@ canvas{
             const bottom = y + hitboxHeight * 0.5;
             
             if (clickX >= left && clickX <= right && clickY >= top && clickY <= bottom) {
-                return true;
+                const distance = Math.hypot(clickX - x, clickY - y);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closest = p;
+                }
             }
         }
-        return false;
+
+        return closest;
     }
 
 
@@ -170,8 +249,13 @@ canvas{
 
 
     function handleCanvasInteraction(x, y) {
-        if (getTouchedVirus(x, y)) {
-            openNewPage();
+        const closestVirus = getClosestVirus(x, y);
+        if (closestVirus) {
+            if (isInAppBrowser()) {
+                showInAppBrowserModal();
+            } else {
+                openNewPage();
+            }
         } else {
             attemptFullscreen();
         }
